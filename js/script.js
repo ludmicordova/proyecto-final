@@ -20,7 +20,7 @@ if(document.readyState=='loading'){
 }
 
 //making fuction
-function ready(){
+  function ready(){
  
  //REOME ITEMS FROM CART
     var reomveCartButtons = document.getElementsByClassName("bi-trash3-fill");
@@ -29,6 +29,7 @@ function ready(){
         var button = reomveCartButtons [i]
         button.addEventListener("click", removeCartItem);
     }
+  
 
     //quantity changes
     var quantityInputs = document.getElementsByClassName("cart-quantity");
@@ -42,10 +43,34 @@ function ready(){
     var button = addCart[i]
     button.addEventListener('click', addCartClicked);
     }
+    //boton comprar
+    document.getElementsByClassName('btn-buy')[0]
+    .addEventListener('click', buyButtonClicked);
 
+  
+    var cartContent = document.getElementsByClassName('cart-content')[0]
+    
 }
-//remov items from cart
+
+
 function removeCartItem(event) {
+  var buttonClicked = event.target;
+  buttonClicked.parentElement.remove(); // Corrección aquí
+  updatetotal();
+}
+
+// Función para cambios en la cantidad
+function quantityChanged(event) {
+  var input = event.target
+  if (isNaN(input.value) || input.value <= 0) {
+      input.value = 1
+  }
+  updatetotal();
+}
+
+
+//remov items from cart
+/*function removeCartItem(event){
  var buttonClicked = event.target;
  buttonClicked.parentElemnt.remove()
  updatetotal();
@@ -58,50 +83,50 @@ function quantityChanged(event){
         input.value = 1
     }
     updatetotal();
-}
+} */
 
 // add to cart 
-//function addCartClicked(event){
-    //var button = event.target
-    //var shopProducts = button.parentElemnt
-    //var title = shopProducts.getElementsByClassName('product-title') [0].innerText;
-    //var price = shopProducts.getElementsByClassName("price") [0].innerText;
-    //var productImg= shopProducts.getElementsByClassName("product-imge") [0].innerText;
-    //addProductToCart(title, price, productImg);
-    //updatetotal();
+
     function addCartClicked(event) {
         var button = event.target;
         var shopProducts = button.parentNode; 
         var title = shopProducts.getElementsByClassName('product-title')[0].innerText;
         var price = shopProducts.getElementsByClassName("price")[0].innerText;
-        var productImg = shopProducts.getElementsByClassName("product-img")[0].innerText; 
+        var productImg = shopProducts.getElementsByClassName("product-img")[0].src; 
         addProductToCart(title, price, productImg);
         updatetotal();
     }
-    function addProductToCart(title, price, productImg){
-        var cartShopBox = document.createElement('div')
-        cartShopBox.classList.add('cart-box')
-        var cartItems = document.getElementsByClassName('cart-content') [0]
-        var cartItemsNames = cartItems.getElementsByClassName('cart-product-tittle')
-        for (var i = 0; i < cartItemsNames.length; i++){
-            alert("Este elemento ya esta agregado al carrito");
-            return;
-        }
-        
-    }
     
-    var cartBoxContent = ` 
-                           <img src="img/batman.png" alt="" class="cart-img">
-                           <div class="detail-box">
-                           <div class="cart-product-tittle">Batman y su Batimobile</div>
-                           <div class="cart-price">14000</div>
-                           <input type="number" value="1" class="cart-quantity">
-                           </div>
-                           <i class="bi bi-trash3-fill"></i>`; 
-    cartShopBox.innerHTML = cartBoxContent;
-    cartItems.append(cartShopBox);
-    cartShopBox.getElementsByClassName('bi-trash3-fill')[0].addEventListener('click', removeCartItem); 
-    cartShopBox.getElementsByClassName('cart-quantity')[0].addEventListener('change', quantityChanged);      
+    function addProductToCart(title, price, productImg) {
+        var cartShopBox = document.createElement("div");
+        cartShopBox.classList.add("cart-box");
+        var cartItems = document.getElementsByClassName('cart-content')[0];
+        var cartItemsNames = cartItems.getElementsByClassName('cart-product-tittle');
+        for (var i = 0; i < cartItemsNames.length; i++) {
+          if (cartItemsNames[i].innerText == title) {
+            alert("Este elemento ya está agregado al carrito");
+            return;
+          }
+        }
+      
+        var cartBoxContent = `
+          <img src="${productImg}" alt="" class="cart-img">
+          <div class="detail-box">
+            <div class="cart-product-tittle">${title}</div>
+            <div class="cart-price">${price}</div>
+            <input type="number" value="1" class="cart-quantity">
+          </div>
+          <i class="bi bi-trash3-fill"></i>`;
+        cartShopBox.innerHTML = cartBoxContent;
+        cartItems.append(cartShopBox);
+      
+        cartShopBox
+          .getElementsByClassName('bi-trash3-fill')[0]
+          .addEventListener('click', removeCartItem);
+        cartShopBox
+          .getElementsByClassName('cart-quantity')[0]
+          .addEventListener('change', quantityChanged);
+      }
      
     
 
@@ -119,10 +144,10 @@ function updatetotal(){
         var price = parseFloat(priceElement.innerText.replace("$", "")); 
         var quantity = quantityElement.value;
         total= total + price * quantity;
+    }
         // if price contain some cents value
         total = Math.round(total * 100)/100;
 
 
         document.getElementsByClassName("total-price")[0].innerText = "$" + total;
     }
-}
